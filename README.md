@@ -1,115 +1,97 @@
-<h1 align="center">Customer Onboarding for Claude Code</h1>
+# Customer Onboarding for Claude Code
 
-<p align="center">
-  <strong>The open-source customer onboarding system that is just a database and Claude Code.</strong>
-</p>
+Own the plan from signed contract to accepted handover. Customer waits, task dependencies, acceptance evidence and launch decisions in one Postgres database. Use Claude Code, Codex, OpenCode or Cursor to operate it.
 
-<p align="center">
-  Created by <a href="https://www.enterprisedna.co"><strong>Enterprise DNA</strong></a>. Free and open source. Works with Claude Code, Codex, OpenCode or Cursor.
-</p>
+## Three ways to run it
 
-<!-- three-doors -->
-<table align="center">
-  <tr>
-    <td align="center"><strong>Do it yourself</strong><br/>Clone it, run it, own it. Free, MIT.<br/><a href="#quick-start">Quick start</a></td>
-    <td align="center"><strong>We customise it</strong><br/>Your fields, your rules, your Rocketlane data brought across.<br/><a href="https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=rocketlane">Book a call</a></td>
-    <td align="center"><strong>We run it for you</strong><br/>Installed, connected and operated inside Omni. Setup fee, then a retainer.<br/><a href="https://enterprisedna.co/omni/instead-of/rocketlane?utm_source=github&utm_medium=readme&utm_campaign=rocketlane">How it works</a></td>
-  </tr>
-</table>
+- **Do it yourself.** Free under the MIT licence. Run the demo, import your records and maintain your own installation. Hosting and agent subscriptions are separate costs.
+- **We customise it.** Enterprise DNA brings your Rocketlane data across, adds your fields, rules and documents, and builds a customer website or different technology stack if you need one. One setup fee, then a retainer for ongoing work.
+- **We run it for you.** Installed, connected and operated inside Omni by Enterprise DNA. One setup fee, then a monthly retainer. [Book a call](https://enterprisedna.co/omni/book?offer=replace-software&utm_campaign=rocketlane&utm_medium=readme).
 
-<p align="center">
-  <a href="#what-is-this">What is this</a> &bull;
-  <a href="#why-no-front-end">Why no front end</a> &bull;
-  <a href="#quick-start">Quick start</a> &bull;
-  <a href="#the-commands">Commands</a> &bull;
-  <a href="#instead-of-rocketlane">Instead of Rocketlane</a> &bull;
-  <a href="#want-it-installed-and-run-for-you">Installed for you</a> &bull;
-  <a href="#license">License</a>
-</p>
+## Run the demo
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Node-20+-339933?style=flat-square" alt="Node 20+" />
-  <img src="https://img.shields.io/badge/PostgreSQL-any-336791?style=flat-square" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/PGlite-embedded-3ecf8e?style=flat-square" alt="PGlite" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License" />
-</p>
-
----
-
-## What is this
-
-Customer Onboarding for Claude Code does the job you pay Rocketlane for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the Rocketlane dashboard cannot.
-
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays Rocketlane per year, all in, with a source. -->
-
-Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=rocketlane).
-
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
-
-## Why no front end
-
-- The front end was only ever there because the database was hard to talk to. That is no longer true.
-- Your data sits in plain Postgres tables you own. Any tool can read them. No export, no lock-in.
-- No seats, no tiers, no add-ons. Read [docs/why-no-front-end.md](docs/why-no-front-end.md) for the honest trade-offs too.
-
-## Quick start
-
-Sixty seconds, no database install (an embedded Postgres runs inside Node):
+Node 20 or newer. No database account required.
 
 ```bash
-git clone https://github.com/Enterprise-DNA-OS/customer-onboarding-for-claude-code.git
-cd customer-onboarding-for-claude-code
 npm install
 npm run demo
+npm test
+npm run onboarding -- weekly-review
+npm run view
+npm run docs
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+Without DATABASE_URL, PGlite stores records in .data/db. Set DATA_DIR for another directory. For shared Postgres, set DATABASE_URL, then run npm run migrate against an empty database. Demo seed is for a demo database only. Production starts with migrations and your own records; do not seed fictional records there. Date calculations use UTC.
 
-### Use it with your own Postgres or Supabase
+Harbour Delivery Studio is fictional. Its demo includes a customer waiting to supply records, a stale overdue migration and a pilot ready for launch. Dates are relative to the first seed. Repeating the seed preserves existing work.
 
-Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same commands, shared data, no per-seat fee.
+## Five weekly jobs
 
-## The commands
+1. /kickoff: review the agreed work, owners and dates.
+2. /customer-chase: find customer tasks holding up delivery.
+3. /blockers: identify unfinished prerequisites.
+4. /launch-readiness: check completed work and acceptance.
+5. /handover: assemble the delivery record for review.
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
+/weekly-review combines attention, launch-readiness and compliance. 32 CLI commands and 34 slash recipes ship. [Commands and flags](docs/cli.md). Names match without case; UUID prefixes must be unique. Ambiguous matches list candidates and exit 1. All commands accept --json.
 
-| Command | What it does |
+## Acceptance is evidence, not a percentage
+
+Every milestone needs at least one task. Every task must be complete before acceptance, and acceptance records who approved it and the evidence. Launch requires at least one milestone and task, every task complete and every milestone accepted. Adding or reopening a task clears its milestone acceptance. Reopening a launched project clears all its acceptances for fresh review. Dependencies cannot cross projects or form cycles. A completed prerequisite cannot reopen while a completed dependent still relies on it.
+
+These are operator workflow guards. Database owners can change records directly. Actor labels are not authentication and activity history is not tamper-proof.
+
+## Ten questions for the delivery meeting
+
+These are questions this build answers today, not a claim that Rocketlane cannot produce comparable reports. Its own documentation describes custom reporting and dashboards. You own and can change the definitions here.
+
+| Question | Command |
 |---|---|
-| `/...` | ... |
+| Which launches still need customer acceptance? | launch-readiness |
+| Which customer tasks are overdue? | customer-chase |
+| Which internal work is blocked by prerequisites? | blockers |
+| Which projects have gone quiet for more than a week? | attention |
+| Which projects exceeded their planned hours? | effort-review |
+| Who owns the largest overdue task list? | owner-load |
+| Which milestone has evidence of customer acceptance? | milestones |
+| What changed since the kickoff? | updates |
+| Which customers need a privacy review? | compliance |
+| What must the team resolve before this week's handovers? | weekly-review |
 
-## Instead of rocketlane
+## Your first hour: ten things to ask for
 
-<!-- TODO(author): how to bring data across from Rocketlane; link docs/replace-rocketlane.md -->
+1. Put our name and colours on the kickoff plan.
+2. Show customers holding up delivery.
+3. Find every unfinished prerequisite.
+4. Tell me which projects have gone quiet.
+5. Compare logged and planned hours.
+6. Show the acceptance evidence for the pilot.
+7. Draft the Harbour status note.
+8. Test our Rocketlane export without saving it.
+9. Add our implementation region through /customise.
+10. Add a weekly customer-waits report through /new-view.
 
-## Architecture
+## Bring your history
 
+```bash
+npm run onboarding -- import rocketlane --projects=imports/projects.csv --tasks=imports/tasks.csv --actor="Migration operator" --dry-run
+npm run onboarding -- import rocketlane --projects=imports/projects.csv --tasks=imports/tasks.csv --actor="Migration operator"
 ```
-customer-onboarding-for-claude-code/
-  CLAUDE.md                 how the operator wants this run (routing table + house rules)
-  AGENTS.md                 the same, for Codex / OpenCode / Cursor / Gemini CLI
-  .claude/commands/         the slash commands
-  scripts/                  the CLI the commands drive
-  scripts/lib/db.mjs        one adapter: DATABASE_URL (pg) or embedded PGlite
-  supabase/migrations/      plain SQL schema
-  supabase/seed.sql         demo data
-  docs/                     the thesis and the migration guide
-```
 
-## Built for coding agents
+One command imports the project-list and task-list CSV files. It keeps raw source fields, validates names and dates, and rolls back the entire file pair on an error. Exact repeats skip; changed source rows require reconciliation. Configurable headings use --mapping. Custom statuses must be normalised first. See [the exact mapping and cutover guide](docs/replace-rocketlane.md). Fixtures are synthetic examples, not vendor-generated exports.
 
-The database, CLI and command recipes work with Claude Code, Codex, OpenCode or Cursor. Ask your coding agent for a new command and have it implement and test the change against the same records.
+The imported plan starts active and unaccepted. A source task marked complete carries a source-completion note; its import date is recorded as the completion date because the compact mapping does not reconstruct historical completion times. Original values remain in source_data. Dependency links, customer sign-offs, files, comments, financial records and portal accounts require separate reconciliation.
 
-## Contributing
+## Documents and views
 
-Issues and pull requests are welcome. Keep the shape: plain SQL, a small CLI, a slash command per recurring job, no front end.
+Change brand.json once. npm run docs produces a kickoff plan, acceptance record and handover pack per project. npm run view produces a weekly dashboard and privacy review. The HTML is read-only and printable. Keep it private. OUTPUT_DIR changes the output root. /draft-status and /draft-handover create internal drafts and never send them.
 
-## Want it installed and run for you?
+/compliance checks notice evidence and local retention/security review dates against documented principles. It cannot establish legal compliance. [Rules and sources](docs/compliance.md). /customise changes fields and rules through versioned migrations; /new-view adds a report. [What screens provide](docs/why-no-front-end.md).
 
-Enterprise DNA installs Customer Onboarding for Claude Code for your business, migrates your Rocketlane data, connects it to the rest of your tools, and runs it for you as part of **Omni**, our managed Command Center. One setup fee, then a monthly retainer.
+## Verification and operation
 
-- Book a call: [enterprisedna.co/omni/book](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=rocketlane)
-- Read more: [enterprisedna.co/omni/instead-of/rocketlane](https://enterprisedna.co/omni/instead-of/rocketlane?utm_source=github&utm_medium=readme&utm_campaign=rocketlane)
+The test suite uses a temporary database and exercises every command. It tests blocked launches, empty milestones, acceptance invalidation, dependency cycles and cross-project references, failed-import rollback, repeat imports, header mapping, dates, exports, HTML escaping, drafts and CLI exit codes. CI is configured for Windows and Linux on Node 20 and 22, plus Postgres 17. TEST_DATABASE_URL must point at a fresh disposable database.
 
-## License
+RLS is enabled without public policies. This base uses a trusted operator connection; it is not a public customer portal. A shared installation needs authenticated access, restricted roles, backups, restore rehearsal and a policy for personal information. Export writes all seven record sets to JSON; it is an interchange snapshot, not an automatic restore. Back up the database and evidence files separately.
 
-MIT. Copyright (c) 2026 Enterprise DNA.
+This is an onboarding operations base. It does not implement Rocketlane's financial management, live collaboration or integrations. No front end, email delivery or payment processing is included. MIT licence. Not affiliated with Rocketlane or Anthropic.

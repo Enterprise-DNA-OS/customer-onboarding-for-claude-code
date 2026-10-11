@@ -1,5 +1,36 @@
-# Slash commands
+# Customer onboarding recipes
 
-One file per recurring job. Each command tells Claude Code exactly which CLI command to run and how to present the result, so the operator never re-explains the job.
-
-Add a command every time the same ask comes twice. Frontmatter needs a `description:` line. The body is the brief.
+- /accounts
+- /projects
+- /tasks
+- /milestones
+- /customer-chase
+- /blockers
+- /launch-readiness
+- /attention
+- /effort-review
+- /owner-load
+- /compliance
+- /updates
+- /history
+- /help
+- /weekly-review
+- /kickoff
+- /handover
+- /add-account
+- /add-project
+- /add-milestone
+- /add-task
+- /task-status
+- /depend
+- /accept
+- /launch
+- /reopen-project
+- /log
+- /review-privacy
+- /import
+- /export
+- /draft-status
+- /draft-handover
+- /customise
+- /new-view

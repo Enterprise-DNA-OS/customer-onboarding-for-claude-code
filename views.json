@@ -1,13 +1,29 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Customer Onboarding for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Customer onboarding this week",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Launch readiness",
+        "sql": "select * from onboarding.launch_readiness order by target_on,name"
+      },
+      {
+        "title": "Outstanding customer work",
+        "sql": "select project,name,owner,due_on,overdue,blockers from onboarding.task_board where responsible='customer' and status!='done' order by due_on"
+      },
+      {
+        "title": "Effort and recent contact",
+        "sql": "select name,budget_hours,logged_hours,last_update from onboarding.project_health order by name"
+      }
+    ]
+  },
+  {
+    "name": "privacy",
+    "title": "Privacy evidence review",
+    "sections": [
+      {
+        "title": "Records needing review",
+        "sql": "select * from onboarding.privacy_review where finding is not null"
       }
     ]
   }

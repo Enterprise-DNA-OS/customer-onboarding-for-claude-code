@@ -1,11 +1,62 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
+    "name": "kickoff-plan",
+    "title": "Kickoff plan",
+    "for_each": "select id,name from onboarding.projects order by name",
     "file": "name",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Project",
+        "sql": "select name,owner,starts_on,target_on,budget_hours from onboarding.projects where id=$1"
+      },
+      {
+        "title": "Milestones",
+        "sql": "select name,due_on from onboarding.milestones where project_id=$1"
+      },
+      {
+        "title": "Responsibilities",
+        "sql": "select name,owner,responsible,due_on from onboarding.tasks where project_id=$1"
+      }
+    ]
+  },
+  {
+    "name": "acceptance-record",
+    "title": "Acceptance record",
+    "for_each": "select id,name from onboarding.projects order by name",
+    "file": "name",
+    "sections": [
+      {
+        "title": "Readiness",
+        "sql": "select name,status,open_tasks,unaccepted,ready from onboarding.launch_readiness where id=$1"
+      },
+      {
+        "title": "Customer acceptance",
+        "sql": "select name,accepted_by,accepted_on,evidence from onboarding.milestones where project_id=$1"
+      },
+      {
+        "title": "Completion evidence",
+        "sql": "select name,status,evidence,completed_on from onboarding.tasks where project_id=$1"
+      }
+    ]
+  },
+  {
+    "name": "handover-pack",
+    "title": "Handover pack",
+    "for_each": "select id,name from onboarding.projects order by name",
+    "file": "name",
+    "sections": [
+      {
+        "title": "Launch record",
+        "sql": "select name,status,launched_on,launch_evidence from onboarding.projects where id=$1"
+      },
+      {
+        "title": "Acceptance",
+        "sql": "select name,accepted_by,accepted_on,evidence from onboarding.milestones where project_id=$1"
+      },
+      {
+        "title": "Work history",
+        "sql": "select name,actor,logged_on,hours from onboarding.updates where project_id=$1 order by logged_on"
+      }
     ]
   }
 ]
