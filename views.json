@@ -5,7 +5,7 @@
     "sections": [
       {
         "title": "Launch readiness",
-        "sql": "select * from onboarding.launch_readiness order by target_on,name"
+        "sql": "select name,customer,owner,status,target_on,open_tasks,unaccepted,case when ready then 'Ready' else 'Needs work' end readiness from onboarding.launch_readiness order by target_on,name"
       },
       {
         "title": "Outstanding customer work",
@@ -23,7 +23,7 @@
     "sections": [
       {
         "title": "Records needing review",
-        "sql": "select * from onboarding.privacy_review where finding is not null"
+        "sql": "select name,finding from onboarding.privacy_review where finding is not null"
       }
     ]
   }
